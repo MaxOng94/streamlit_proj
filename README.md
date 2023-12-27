@@ -13,7 +13,7 @@
 1. Navigate to the project repository:
 
    ```bash
-   cd recommender-system
+   cd streamlit_proj
    ```
 
 2. Run the cmd below to create and install requirements packages:
@@ -30,3 +30,12 @@
    ```bash
     streamlit run app.py
    ```
+
+## Future work
+
+1. Build a dashboard instead of a single visualization on streamlit
+2. Refactor code at the backend
+
+### Bug fix
+
+1. Prevent API calls when there is no user input
