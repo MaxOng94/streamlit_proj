@@ -8,27 +8,35 @@ import pandas as pd
 import openai
 import streamlit as st
 from utils import filter_dataframe
-#import streamlit_nested_layout
 from classes import get_primer_for_plotly,format_question,run_request
 
 import warnings
 warnings.filterwarnings("ignore")
 st.set_option('deprecation.showPyplotGlobalUse', False)
-st.set_page_config(page_icon="chat2vis.png",layout="wide",page_title="Chat2VIS")
+st.set_page_config(page_icon="chat2vis.png",layout="wide",page_title="Streamlit")
 
 
-st.markdown("<h1 style='text-align: center; font-weight:bold;  padding-top: 0rem;'> \
-            Streamlit Tech Assessment</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; font-weight:bold;  padding-top: 0rem;'>\
+            Streamlit App Powered by LLM\
+            </h1>", unsafe_allow_html=True)
 
 
 st.markdown("<h4 >\
-                In this assessment, instead of building a streamlit app from scratch, I decided to extend an existing implementation, Chat2vis. Chat2vis is a __ created by __ that allows users to directly display visualization on streamlit.<br><br> I've implemented these additional features:\
+                In this assessment, instead of building a streamlit app from scratch, I decided to extend an existing implementation, <a href= 'https://blog.streamlit.io/chat2vis-ai-driven-visualisations-with-streamlit-and-natural-language/' > Chat2vis.</a><br>\
+                Chat2vis generates data visualization via natural language using LLMs such as GPT, Llama etc.\
+            <br><br> I've implemented these additional features :<br>\
                 <ol>\
-                    <li>Changed visualization to plotly for more interactivity.</li>\
-                    <li>\
+                    <li>Changed visualization to plotly for more interactivity.\
+                        <ul>\
+                            <li>Original chat2vis uses matplotlib with very limited interactivity.</li>\
+                            <li>With plotly, users can zoom, pan, select data points, download visualization etc.</li>\
+                        </ul>\
+                    </li>\
+                    <br><li>\
                         Allow user to edit code generated from LLM.\
                         <ul>\
-                            <li>If user is unhappy with the generated plot, they can execute their own code.</li>\
+                            <li>Users have the option to view the code output from LLM.</li>\
+                            <li>If user is unhappy with the generated plot, they can modify the existing code generated and execute their own code.</li>\
                         </ul>\
                     </li>\
                 </ol> \
@@ -36,8 +44,8 @@ st.markdown("<h4 >\
 
 
 available_models = {"ChatGPT-4": "gpt-4","ChatGPT-3.5": "gpt-3.5-turbo","GPT-3": "text-davinci-003",
-                        "GPT-3.5 Instruct": "gpt-3.5-turbo-instruct","Code Llama":"CodeLlama-34b-Instruct-hf",
-                        "User Input Code":"user-input"}
+                        "GPT-3.5 Instruct": "gpt-3.5-turbo-instruct","Code Llama":"CodeLlama-34b-Instruct-hf"}
+                        # "User Input Code":"user-input"
 
 
 # List to hold datasets
@@ -66,30 +74,34 @@ with st.sidebar:
     dataset_container = st.empty()
 
     # Add facility to upload a dataset
-    try:
-        uploaded_file = st.file_uploader(":computer: Load a CSV file:", type="csv")
-        index_no=0
-        if uploaded_file:
-            # Read in the data, add it to the list of available datasets. Give it a nice name.
-            file_name = uploaded_file.name[:-4].capitalize()
-            datasets[file_name] = pd.read_csv(uploaded_file)
-            # We want to default the radio button to the newly added dataset
-            index_no = len(datasets)-1
-    except Exception as e:
-        st.error("File failed to load. Please select a valid CSV file.")
-        print("File failed to load.\n" + str(e))
+    # try:
+    #     uploaded_file = st.file_uploader(":computer: Load a CSV file:", type="csv")
+    #     index_no=0
+    #     if uploaded_file:
+    #         # Read in the data, add it to the list of available datasets. Give it a nice name.
+    #         file_name = uploaded_file.name[:-4].capitalize()
+    #         datasets[file_name] = pd.read_csv(uploaded_file)
+    #         # We want to default the radio button to the newly added dataset
+    #         index_no = len(datasets)-1
+    # except Exception as e:
+    #     st.error("File failed to load. Please select a valid CSV file.")
+    #     print("File failed to load.\n" + str(e))
     # Radio buttons for dataset choice
-    chosen_dataset = dataset_container.radio(":bar_chart: Choose your data:",datasets.keys(),index=index_no)#,horizontal=True,)
+    chosen_dataset = dataset_container.radio(":bar_chart: Choose your data:",datasets.keys())#,horizontal=True,)
 
     # Check boxes for model choice
     st.write(":brain: Choose your model(s):")
     # Keep a dictionary of whether models are selected or not
     use_model = {}
     for model_desc,model_name in available_models.items():
-        if model_desc != 'User Input Code':
-            label = f"{model_desc} ({model_name})"
-            key = f"key_{model_desc}"
+        label = f"{model_desc} ({model_name})"
+        key = f"key_{model_desc}"
+        if model_desc == 'Code Llama':
             use_model[model_desc] = st.checkbox(label,value=True,key=key)
+        else:
+            use_model[model_desc] = st.checkbox(label,value=False,key=key)
+
+
 
 
 st.sidebar.markdown('<a style="text-align: center;padding-top: 0rem;" href="mailto: i.build.apps.4.u@gmail.com">:email:</a> Credits to Paula Maddigan and Teo Susnjak, the creator of Chat2VIS', unsafe_allow_html=True)
@@ -108,14 +120,35 @@ for dataset_num, tab in enumerate(tab_list):
         dataset_name = list(datasets.keys())[dataset_num]
         st.subheader(dataset_name)
         st.dataframe(filter_dataframe(datasets[dataset_name],dataset_name),hide_index=True)
-        # display the dtypes of dataframe in streamlit
-        st.write(f"Data Types: {datasets[dataset_name].dtypes}")
+
 
 
 
 
 with st.container():
-
+    st.markdown("<h1 style='text-align: left; font-weight:bold;  padding-top: 0rem;'> \
+                    Instructions\
+                    <ol>\
+                        <li>\
+                        From the side bar, choose the dataset you want to visualize.\
+                        </li>\
+                        <li>\
+                        Select the model you want to use. You can  select   more than 1 model. \
+                        </li>\
+                        <li>\
+                        Note that you will need a valid HuggingFace API key to use Llama models and a   valid     OpenAI API key to use open ai models. \
+                        </li>\
+                        <li>\
+                        Describe the kind of visualization you want in simple english. \
+                        <ul>\
+                            Eg: Give me a bar chart of the top 10 grossing movie in ascending order\
+                        </ul>\
+                        </li>\
+                        <li>\
+                        The Show/Hide code button will display code generated from LLM. You can insert code changes and run it directly to display on streamlit.\
+                        </li>\
+                    </ol> \
+                </h1>", unsafe_allow_html=True)
     key_col1,key_col2 = st.columns(2)
     openai_key = key_col1.text_input(label = ":key: OpenAI Key:", help="Required for ChatGPT-4, ChatGPT-3.5, GPT-3, GPT-3.  5 Instruct.",type="password")
     hf_key = key_col2.text_input(label = ":hugging_face: HuggingFace Key:",help="Required for Code Llama",  type="password")
@@ -149,20 +182,20 @@ with st.container():
 
 
 
-
-
-
     # Make a list of the models which have been selected
     selected_models = [model_name for model_name, choose_model in use_model.items() if choose_model]
     model_count = len(selected_models)
 
-     # Text area for query
-    # add default text in st.text area
 
-    question_default_text = 'Give me a bar chart of the the top 10 grossing movie in ascending order'
-    question = st.text_area("Describe what visualization you want in simple english",height=10,value=question_default_text)
+    question_default_text = 'Give me a bar chart of the top 10 grossing movie in ascending order'
+    question = st.text_area(f"Describe what visualization you want in simple english. \nCurrent dataset chosen: {chosen_dataset}",height=10)
+
     if st.button("Go...",key=f"go_btn{st.session_state.run_id}"):
+        # clear all states except go_id
+        st.session_state['model_answer_dict'] = {}
         st.session_state['go_id'] +=1
+
+
 
 
 
@@ -192,13 +225,14 @@ with st.container():
 
             for plot_num, model_type in enumerate(selected_models):
                 with plots[plot_num]:
-
+                    
+                    # if there is a previously saved answer
                     if st.session_state['model_answer_dict'].get(model_type, None):
                         answer = st.session_state['model_answer_dict'][model_type]
 
                     else:
                         model= available_models[model_type]
-                            # Format the question 
+                        # Format the question 
                         question_to_ask = format_question(desc_primer, code_primer, question, model_type)   
 
                         # Run the question
@@ -208,11 +242,6 @@ with st.container():
                         answer = code_primer + answer
 
                     try:
-                    #     if st.session_state['user_input_code']:
-                    #         subheader_add_on = ' (user_modified)'
-                    #     else: 
-                    #         subheader_add_on = None
-
                         st.subheader(model_type)
                         st.session_state['model_answer_dict'][model_type] = answer
                         # the answer is the completed Python script so add to the beginning of the script to it.
