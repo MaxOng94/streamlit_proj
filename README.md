@@ -58,6 +58,7 @@
 
 1. Build a dashboard instead of a single visualization on streamlit
 2. Refactor code at the backend
+3. Create dockerfile for app
 
 ### Bug fix
 
