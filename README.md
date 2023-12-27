@@ -31,6 +31,29 @@
     streamlit run app.py
    ```
 
+# Description
+
+<h4 >
+      In this assessment, instead of building a streamlit app from scratch, I decided to extend an existing implementation, <a href= 'https://blog.streamlit.io/chat2vis-ai-driven-visualisations-with-streamlit-and-natural-language/' > Chat2vis.</a><br>
+      Chat2vis generates data visualization via natural language using LLMs such as GPT, Llama etc.
+      <br><br> I've implemented these additional features :<br>
+         <ol>
+            <li>Changed visualization to plotly for more interactivity.
+               <ul>
+                     <li>Original chat2vis uses matplotlib with very limited interactivity.</li>
+                     <li>With plotly, users can zoom, pan, select data points, download visualization etc.</li>
+               </ul>
+            </li>
+            <br><li>
+               Allow user to edit code generated from LLM.
+               <ul>
+                     <li>Users have the option to view the code output from LLM.</li>
+                     <li>If user is unhappy with the generated plot, they can modify the existing code generated and execute their own code.</li>
+               </ul>
+            </li>
+         </ol> 
+</h4>
+
 ## Future work
 
 1. Build a dashboard instead of a single visualization on streamlit
