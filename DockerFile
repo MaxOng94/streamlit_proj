@@ -1,0 +1,19 @@
+FROM ubuntu:20.04
+
+# Set the default shell to bash
+SHELL ["/bin/bash", "-c"]
+
+RUN apt-get update && apt-get -y install --no-install-recommends python3-pip
+# remove unnecessary dependencies 
+# -y will automatically answer yes to prompts
+
+WORKDIR /app 
+
+COPY . /app
+
+RUN pip install -r requirements.txt
+
+EXPOSE 8501 
+# does not actually publish port to the host machine, it is just a documentation for others reading the dockerfile that the container will use port 8501 
+
+CMD ["streamlit","run","./app.py"]
