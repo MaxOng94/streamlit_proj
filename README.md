@@ -54,20 +54,8 @@
          </ol> 
 </h4>
 
-## Future work
 
-1. Build a dashboard instead of a single visualization on streamlit
-2. Refactor code at the backend
-
-## Update
-
-1. Created dockerfile to containerize application
-
-### Bug fix
-
-1. Prevent API calls when there is no user input
-
-## Docker
+# Docker
 This section contains instructions for building and running the Docker image for this project.
 
 Build the Docker Image
@@ -96,5 +84,19 @@ Run docker with interactive bash shell to test or debug:
 
 `docker run -p 8000:80 -it --rm <your-image-name> /bin/bash
 `
+
+## Future work
+
+1. Build a dashboard instead of a single visualization on streamlit
+2. Refactor code at the backend
+
+## Update
+
+1. Created dockerfile to containerize application
+
+### Bug fix
+
+1. Prevent API calls when there is no user input
+
 
 
