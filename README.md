@@ -66,3 +66,35 @@
 ### Bug fix
 
 1. Prevent API calls when there is no user input
+
+## Docker
+This section contains instructions for building and running the Docker image for this project.
+
+Build the Docker Image
+To build the Docker image, run the following command from the root directory of your project:
+
+`docker build . -t <your-image-name>`
+
+
+This will create a Docker image using the instructions in the Dockerfile. Replace 
+<your-image-name>
+ with the name you want to give your image.
+
+Run the Docker Container
+To run a container from your built image, run:
+
+`docker run -p <host-port>:<container-port> <your-image-name>`
+
+This will run your image in a container, exposing the container port to the host port specified.
+
+For example:
+`docker run -p 8000:80 my-image`
+
+
+Run docker with interactive bash shell to test or debug: 
+
+
+`docker run -p 8000:80 -it --rm <your-image-name> /bin/bash
+`
+
+
